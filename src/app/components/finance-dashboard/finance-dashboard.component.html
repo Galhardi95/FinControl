@@ -1,0 +1,119 @@
+<div class="finance-dashboard">
+  <!-- Header -->
+  <header class="header">
+    <h1>FinControl</h1>
+    <div class="menu">
+      <span>Sair</span>
+    </div>
+  </header>
+
+  <!-- Month Selector -->
+  <div class="month-selector">
+    <select>
+      <option>2023</option>
+      <option>2024</option>
+    </select>
+    <nav>
+      <a href="#" *ngFor="let month of months" [class.active]="month === selectedMonth" (click)="selectMonth(month)">
+        {{ month }}
+      </a>
+    </nav>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="card green">
+      <p class="value">R$ {{ receitasDoMes | number: '1.2-2' }}</p>
+      <p>Receitas do mês</p>
+    </div>
+    <div class="card red">
+      <p class="value">R$ -{{ Math.abs(despesasDoMes) | number: '1.2-2' }}</p>
+      <p>Despesas do mês</p>
+    </div>
+    <div class="card yellow">
+      <p class="value" [ngClass]="{'green': totalDoMes >= 0, 'red': totalDoMes < 0}">
+        R$ {{ totalDoMes | number: '1.2-2' }}
+      </p>
+      <p>Total do mês</p>
+    </div>
+  </div>
+  
+  
+
+  <!-- Add Button and Search -->
+  <div class="actions">
+    <button class="add-btn" (click)="toggleForm()">Adicionar</button>
+    <input type="text" placeholder="Pesquisar" [(ngModel)]="searchQuery" />
+  </div>
+
+  <!-- Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Data</th>
+        <th>Categoria</th>
+        <th>Tipo</th>
+        <th>Pagamento</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of data; let i = index">
+        <td>{{ item.descricao }}</td>
+        <td>R$ {{ item.valor | number: '1.2-2' }}</td>
+        <td>{{ item.data }}</td>
+        <td>{{ item.categoria }}</td>
+        <td>
+          <span [class.type-tag]="item.tipo === 'receita'" [class.type-expense]="item.tipo === 'despesa'">
+            {{ item.tipo }}
+          </span>
+        </td>
+        <td>
+          <button class="delete-btn" (click)="deleteData(i)">
+            🗑️
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+
+  <!-- Modal Form -->
+  <div class="modal" *ngIf="isFormVisible">
+    <div class="modal-content">
+      <span class="close" (click)="toggleForm()">&times;</span>
+      <h3>Adicionar Registro</h3>
+      <form (ngSubmit)="addData()">
+        <label>
+          Descrição:
+          <input type="text" [(ngModel)]="newData.descricao" name="descricao" required />
+        </label>
+        <label>
+          Valor:
+          <input type="number" [(ngModel)]="newData.valor" name="valor" required />
+        </label>
+        <label>
+          Data:
+          <input type="date" [(ngModel)]="newData.data" name="data" required />
+        </label>
+        <label>
+          Categoria:
+          <input type="text" [(ngModel)]="newData.categoria" name="categoria" required />
+        </label>
+        <label>
+          Tipo:
+          <select [(ngModel)]="newData.tipo" name="tipo" required>
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="submit">Salvar</button>
+          <button type="button" (click)="toggleForm()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>  
